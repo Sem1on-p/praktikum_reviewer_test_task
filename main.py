@@ -4,6 +4,7 @@ import datetime as dt
 class Record:
     def __init__(self, amount, comment, date=''):
         self.amount = amount
+        # Я бы поменял местами strptime if date else now
         self.date = (
             dt.datetime.now().date() if
             not
@@ -21,8 +22,10 @@ class Calculator:
 
     def get_today_stats(self):
         today_stats = 0
+        # Не с большой буквы 
         for Record in self.records:
             if Record.date == dt.datetime.now().date():
+                # +=
                 today_stats = today_stats + Record.amount
         return today_stats
 
@@ -39,6 +42,7 @@ class Calculator:
 
 
 class CaloriesCalculator(Calculator):
+    # Нейминг хромает, x - плохое название для переменной
     def get_calories_remained(self):  # Получает остаток калорий на сегодня
         x = self.limit - self.get_today_stats()
         if x > 0:
@@ -56,6 +60,11 @@ class CashCalculator(Calculator):
                                 USD_RATE=USD_RATE, EURO_RATE=EURO_RATE):
         currency_type = currency
         cash_remained = self.limit - self.get_today_stats()
+        # 1. Я бы заменил это условие на словарь, где currency был бы ключом, 
+        # а currency_type b и кожффицент деления значением
+        # 2. Если делать через условие, то проверял бы везде currency, и изменял currency_type,
+        # а так могут возникуть проблемы, если, например, currency_type в каком-то случае 
+        # будет равнятся какому-нибудь currency
         if currency == 'usd':
             cash_remained /= USD_RATE
             currency_type = 'USD'
@@ -76,6 +85,6 @@ class CashCalculator(Calculator):
             return 'Денег нет, держись:' \
                    ' твой долг - {0:.2f} {1}'.format(-cash_remained,
                                                      currency_type)
-
+    # Если метод не переопределяется, то можно его вызвать напрямую через родитеский класс
     def get_week_stats(self):
         super().get_week_stats()
